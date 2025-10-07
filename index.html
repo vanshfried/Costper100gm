@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Calculator</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="databox">
+        <div id="data">
+            <label for="sattu-cost">Sattu Cost (₹/Kg):</label>
+            <input type="number" min="0" id="sattu-cost">
+
+            <label for="whey-cost">Whey Cost (₹/Kg):</label>
+            <input type="number" min="0" id="whey-cost">
+
+            <label for="sattu-percent">Sattu %:</label>
+            <input type="number" min="0" max="100" id="sattu-percent">
+
+            <label for="whey-percent">Whey %:</label>
+            <input type="number" min="0" max="100" id="whey-percent">
+
+            <div id="result">Result: </div>
+        </div>
+    </div>
+
+    <script>
+        const sattuCost = document.getElementById("sattu-cost");
+        const wheyCost = document.getElementById("whey-cost");
+        const sattuPercent = document.getElementById("sattu-percent");
+        const wheyPercent = document.getElementById("whey-percent");
+        const result = document.getElementById("result");
+
+        function calculate() {
+            const sattu = Number(sattuCost.value) || 0;
+            const whey = Number(wheyCost.value) || 0;
+            const sattuP = Number(sattuPercent.value) || 0;
+            const wheyP = Number(wheyPercent.value) || 0;
+
+            // Validate percentages
+            if (sattuP < 0 || sattuP > 100 || wheyP < 0 || wheyP > 100) {
+                result.textContent = "Result: Percentages must be between 0 and 100.";
+                return;
+            }
+
+            // Prevent both zero
+            if (sattuP + wheyP === 0) {
+                result.textContent = "Result: Enter valid percentages.";
+                return;
+            }
+
+            const totalCost = ((sattu * sattuP) + (whey * wheyP)) / (sattuP + wheyP);
+            result.textContent = `Result: ₹${totalCost.toFixed(2)} per Kg`;
+        }
+
+        // Sync percentages two-way
+        sattuPercent.addEventListener("input", () => {
+            const sattuP = Number(sattuPercent.value) || 0;
+            wheyPercent.value = Math.max(0, 100 - sattuP);
+            calculate();
+        });
+
+        wheyPercent.addEventListener("input", () => {
+            const wheyP = Number(wheyPercent.value) || 0;
+            sattuPercent.value = Math.max(0, 100 - wheyP);
+            calculate();
+        });
+
+        // Recalculate on cost input
+        sattuCost.addEventListener("input", calculate);
+        wheyCost.addEventListener("input", calculate);
+    </script>
+</body>
+</html>
